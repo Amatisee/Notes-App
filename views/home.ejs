@@ -1,0 +1,21 @@
+<%- include('partials/header', { title: 'Home' }) %>
+<section class="container hero">
+  <div class="sheet">
+    <h1>Write it down before it slips.</h1>
+    <p>This is a quiet place for everything you want to remember. Make an account, add a title and your thoughts, and come back to them from any device. Only you can see what you write.</p>
+    <div class="actions">
+      <% if (user) { %>
+        <a class="btn btn-hl" href="/dashboard">Open my notes</a>
+      <% } else { %>
+        <a class="btn btn-hl" href="/register">Create a free account</a>
+        <a class="btn" href="/login">Log in</a>
+      <% } %>
+    </div>
+  </div>
+</section>
+<section class="container points">
+  <div><h3>Private by default</h3><p>Every note belongs to the account that wrote it. No one else can read, change, or delete it.</p></div>
+  <div><h3>Quick to write</h3><p>Type a title, add your text, and save. Edit or delete a note whenever you like.</p></div>
+  <div><h3>Fits any screen</h3><p>The site reflows for phones, tablets, and desktops, so your notes stay readable everywhere.</p></div>
+</section>
+<%- include('partials/footer') %>

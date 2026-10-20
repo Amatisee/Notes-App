@@ -1,0 +1,18 @@
+<%- include('partials/header', { title: 'Sign up' }) %>
+<section class="container narrow">
+  <div class="panel">
+    <h1>Create your account</h1>
+    <% if (error) { %><p class="flash flash-error" role="alert"><%= error %></p><% } %>
+    <form method="POST" action="/register">
+      <label for="name">Name</label>
+      <input id="name" name="name" value="<%= form.name %>" maxlength="60" autocomplete="name" required>
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" value="<%= form.email %>" autocomplete="email" required>
+      <label for="password">Password (6 or more characters)</label>
+      <input id="password" name="password" type="password" minlength="6" autocomplete="new-password" required>
+      <button class="btn btn-hl" type="submit">Create account</button>
+    </form>
+    <p class="alt">Already have an account? <a href="/login">Log in</a></p>
+  </div>
+</section>
+<%- include('partials/footer') %>

@@ -1,0 +1,66 @@
+<%- include('partials/header', { title: 'My notes', bare: true }) %>
+<div class="app <%= (selected || isNew) ? 'show-editor' : '' %>">
+  <aside class="sidebar">
+    <div class="side-top">
+      <div class="who"><span class="avatar"><%= user.name.charAt(0).toUpperCase() %></span><span><%= user.name %></span></div>
+      <form method="POST" action="/logout"><button class="link-btn" type="submit">Log out</button></form>
+    </div>
+    <div class="side-title">
+      <h1>Notes</h1>
+      <a class="icon-btn" href="/notes/new" title="New note" aria-label="New note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>
+      </a>
+    </div>
+    <div class="search"><input type="search" id="search" placeholder="Search" aria-label="Search notes"></div>
+    <ul class="list" id="list">
+      <% var last = ''; notes.forEach(function (n) { var g = groupOf(n.updated_at); if (g !== last) { last = g; %>
+        <li class="group"><%= g %></li>
+      <% } %>
+        <li class="item <%= selected && selected.id === n.id ? 'active' : '' %>" data-text="<%= (n.title + ' ' + n.content).toLowerCase() %>">
+          <a href="/notes/<%= n.id %>">
+            <strong><%= n.title %></strong>
+            <span><%= fmtDate(n.updated_at) %>&nbsp; <%= n.content.replace(/\s+/g, ' ').slice(0, 60) %></span>
+          </a>
+        </li>
+      <% }) %>
+      <% if (notes.length === 0) { %><li class="none">No notes yet. Tap the compose button to write your first one.</li><% } %>
+    </ul>
+  </aside>
+
+  <section class="editor">
+    <% if (selected || isNew) { %>
+      <form class="editor-form" method="POST" action="<%= isNew ? '/notes' : '/notes/' + selected.id + '/edit' %>">
+        <div class="toolbar">
+          <a class="back" href="/dashboard">&lsaquo; Notes</a>
+          <% if (selected) { %>
+            <button class="icon-btn danger" type="submit" form="delete-form" title="Delete note" aria-label="Delete note">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+            </button>
+          <% } %>
+          <button class="done" type="submit">Save</button>
+        </div>
+        <% if (error) { %><p class="flash flash-error" role="alert"><%= error %></p><% } %>
+        <% if (selected) { %><p class="stamp">Edited <%= fmtDate(selected.updated_at) %></p><% } %>
+        <input class="title-input" name="title" placeholder="Title" maxlength="100" value="<%= form.title %>" required <%= isNew ? 'autofocus' : '' %> aria-label="Title">
+        <textarea class="body-input" name="content" placeholder="Start writing" maxlength="5000" required aria-label="Content"><%= form.content %></textarea>
+      </form>
+      <% if (selected) { %>
+        <form id="delete-form" method="POST" action="/notes/<%= selected.id %>/delete" onsubmit="return confirm('Delete this note?')"></form>
+      <% } %>
+    <% } else { %>
+      <div class="blank"><p>Select a note from the list, or tap the compose button to start a new one.</p></div>
+    <% } %>
+  </section>
+</div>
+<% if (flash) { %><div class="toast" role="status"><%= flash.message %></div><% } %>
+<script>
+  var q = document.getElementById('search');
+  var items = document.querySelectorAll('#list .item');
+  var groups = document.querySelectorAll('#list .group');
+  q.addEventListener('input', function () {
+    var v = q.value.trim().toLowerCase();
+    items.forEach(function (i) { i.hidden = !!v && i.dataset.text.indexOf(v) === -1; });
+    groups.forEach(function (g) { g.hidden = !!v; });
+  });
+</script>
+<%- include('partials/footer', { bare: true }) %>

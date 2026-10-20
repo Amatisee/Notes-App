@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><%= typeof title !== 'undefined' ? title + ' | Notes' : 'Notes' %></title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<% if (!locals.bare) { %>
+<header class="site-header">
+  <div class="container nav">
+    <a class="brand" href="/">Notes</a>
+    <nav>
+      <% if (user) { %>
+        <a href="/dashboard">My notes</a>
+        <form action="/logout" method="POST"><button class="btn btn-small" type="submit">Log out</button></form>
+      <% } else { %>
+        <a href="/login">Log in</a>
+        <a class="btn btn-small btn-hl" href="/register">Sign up</a>
+      <% } %>
+    </nav>
+  </div>
+</header>
+<main>
+<% if (flash) { %><div class="container"><p class="flash flash-<%= flash.type %>" role="status"><%= flash.message %></p></div><% } %>
+<% } %>
